@@ -198,8 +198,9 @@ char* SCPI_Parser::GetMessage(Stream& interface, char* term_chars) {
   uint8_t msg_counter = 0;
   msg_buffer[msg_counter] = '\0';
 
-  bool continous_data = false;
+  bool continous_data = true;
   unsigned long last_data_millis = millis();
+
   do {
     if (interface.available()) {
         continous_data = true;
@@ -214,11 +215,12 @@ char* SCPI_Parser::GetMessage(Stream& interface, char* term_chars) {
           msg_buffer[msg_counter - strlen(term_chars)] =  '\0';
           break;
         }
-    } else { //No chars aviable jet
-      if ((millis() - last_data_millis) > 10) // 10 ms without new data
+    } else { //No chars available yet
+      if ((millis() - last_data_millis) > timeout) // timeout duration without new data
         continous_data = false;
     }
   } while (continous_data);
+  
   if (continous_data)
     return msg_buffer;
   else

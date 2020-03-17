@@ -51,6 +51,7 @@ typedef SCPI_Parameters SCPI_P;
 typedef void (*SCPI_caller_t)(SCPI_C, SCPI_P, Stream&);
 
 class SCPI_Parser {
+  
  public:
   void SetCommandTreeBase(const char* tree_base);
   void SetCommandTreeBase(const __FlashStringHelper* tree_base);
@@ -60,6 +61,9 @@ class SCPI_Parser {
   void ProcessInput(Stream &interface, char* term_chars);
   char* GetMessage(Stream& interface, char* term_chars);
   void PrintDebugInfo();
+  void SetTimeout(uint32_t val) {
+    timeout = val;
+  };
  protected:
   void AddToken(char* token);
   uint32_t GetCommandCode(SCPI_Commands& commands);
@@ -69,6 +73,7 @@ class SCPI_Parser {
   uint32_t valid_codes_[SCPI_MAX_COMMANDS];
   SCPI_caller_t callers_[SCPI_MAX_COMMANDS];
   uint32_t tree_code_ = 1;
+  uint32_t timeout = 10;  // 10ms
   char msg_buffer[64]; //TODO BUFFER_LENGTH
 };
 
